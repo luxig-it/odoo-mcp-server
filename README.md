@@ -50,14 +50,14 @@ Create a `.env.local` file or set these environment variables:
 # Odoo Connection (Required)
 ODOO_URL=http://your-odoo-instance:8069
 ODOO_DB=your_database            # or ODOO_DATABASE
-ODOO_USERNAME=your_username
-ODOO_PASSWORD=your_password
+ODOO_USERNAME=your_username      # optional when ODOO_TRANSPORT=json2
+ODOO_PASSWORD=your_password      # or API key when ODOO_TRANSPORT=json2
 
 # Transport Mode
 MCP_TRANSPORT=stdio              # 'http' or 'stdio' (default: http)
 
 # Odoo Protocol
-ODOO_TRANSPORT=jsonrpc           # 'jsonrpc' or 'xmlrpc' (default: jsonrpc)
+ODOO_TRANSPORT=jsonrpc           # 'jsonrpc', 'json2', or 'xmlrpc' (default: jsonrpc)
 
 # HTTP Mode Settings (only for MCP_TRANSPORT=http)
 MCP_HTTP_PORT=3001               # HTTP server port (default: 3001)
