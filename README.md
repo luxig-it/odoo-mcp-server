@@ -92,8 +92,7 @@ Or use the global installation:
 {
   "mcpServers": {
     "odoo": {
-      "command": "odoo-mcp-server",
-      "args": ["--stdio"],
+      "command": "odoo-stdio-server",
       "env": {
         "ODOO_URL": "http://your-odoo:8069",
         "ODOO_DB": "your_database",
@@ -102,6 +101,72 @@ Or use the global installation:
         "MCP_TRANSPORT": "stdio"
       }
     }
+  }
+}
+```
+
+### VS Code Configuration
+
+**Global installation:**
+```json
+{
+    "servers": {
+        "odoo": {
+            "command": "odoo-stdio-server",
+            "env": {
+                "ODOO_URL": "${input:odoo_url}",
+                "ODOO_DATABASE": "${input:odoo_db}",
+                "ODOO_USERNAME": "${input:odoo_username}",
+                "ODOO_PASSWORD": "${input:odoo_api_key}",
+                "ODOO_TRANSPORT": "${input:odoo_transport}",
+                "MCP_TRANSPORT": "stdio"
+            }
+        }
+    },
+    "inputs": [
+        {
+            "id": "odoo_url",
+            "type": "promptString",
+            "description": "Odoo base URL",
+            "default": "http://localhost:8069"
+        },
+        {
+            "id": "odoo_db",
+            "type": "promptString",
+            "description": "Odoo database name",
+            "default": "odoo_live"
+        },
+        {
+            "id": "odoo_username",
+            "type": "promptString",
+            "description": "Odoo username (email)",
+        },
+        {
+            "id": "odoo_api_key",
+            "type": "promptString",
+            "description": "Odoo API key (token) or password for non-json2 transports",
+            "default": ""
+        },
+        {
+            "id": "odoo_transport",
+            "type": "promptString",
+            "description": "Odoo transport mode ('jsonrpc', 'json2', or 'xmlrpc')",
+            "default": "json2"
+        }
+    ]
+}
+```
+
+**Local installation (self-built):**
+`./vscode/mcp.json`
+```json
+{
+  "servers": {
+      "odoo": {
+          "command": "npx",
+          "args": ["odoo-stdio-server"],
+          // env ...
+      }
   }
 }
 ```

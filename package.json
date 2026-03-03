@@ -7,7 +7,8 @@
   "type": "module",
   "bin": {
     "odoo-mcp-server": "dist/bin/odoo-mcp-server.js",
-    "odoo-mcp-client": "dist/bin/odoo-mcp-client.js"
+    "odoo-mcp-client": "dist/bin/odoo-mcp-client.js",
+    "odoo-stdio-server": "dist/stdio-server.js"
   },
   "exports": {
     ".": {
