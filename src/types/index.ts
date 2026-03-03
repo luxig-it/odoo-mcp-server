@@ -127,4 +127,4 @@ export interface OdooField {
   selection?: Array<[any, string]>;
 }
 
-export type OdooTransport = 'xmlrpc' | 'jsonrpc' | 'http';
+export type OdooTransport = 'xmlrpc' | 'jsonrpc' | 'json2' | 'http';

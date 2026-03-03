@@ -9,6 +9,8 @@
 import express from 'express';
 import cors from 'cors';
 import crypto from 'crypto';
+import path from 'path';
+import { pathToFileURL } from 'url';
 import { McpServerController } from './controllers/index.js';
 import { logServerEvent } from './views/index.js';
 
@@ -37,22 +39,24 @@ export class HttpMcpServer {
   private async initializeAutoLogin(): Promise<void> {
     const { ODOO_URL, ODOO_DB, ODOO_DATABASE, ODOO_USERNAME, ODOO_PASSWORD, ODOO_TRANSPORT } = process.env;
     const database = ODOO_DB || ODOO_DATABASE; // Support both ODOO_DB and ODOO_DATABASE
+    const transport = ODOO_TRANSPORT || 'jsonrpc';
+    const requiresUsername = transport !== 'json2';
     
-    if (ODOO_URL && database && ODOO_USERNAME && ODOO_PASSWORD) {
+    if (ODOO_URL && database && ODOO_PASSWORD && (!requiresUsername || ODOO_USERNAME)) {
       try {
         logServerEvent('Auto-Login', { 
           url: ODOO_URL, 
           database: database, 
-          username: ODOO_USERNAME,
-          transport: ODOO_TRANSPORT || 'jsonrpc'
+          username: ODOO_USERNAME || '(json2-api-key)',
+          transport
         });
         
         await this.controller.handleToolCall('odoo_connect', {
           url: ODOO_URL,
           database: database,
-          username: ODOO_USERNAME,
+          username: ODOO_USERNAME || 'json2-api-key',
           password: ODOO_PASSWORD,
-          transport: ODOO_TRANSPORT || 'jsonrpc'
+          transport
         });
         
         logServerEvent('Auto-Login Success', { status: 'Connected to Odoo' });
@@ -209,7 +213,15 @@ export class HttpMcpServer {
                 if (v && v.type === 'array' && v.items && v.items.anyOf) {
                   copy.inputSchema.properties[k] = {
                     type: 'array',
-                    items: { type: ['string','number','boolean','array','null'] },
+                    items: {
+                      anyOf: [
+                        { type: 'string' },
+                        { type: 'number' },
+                        { type: 'boolean' },
+                        { type: 'array', items: {} },
+                        { type: 'null' }
+                      ]
+                    },
                     description: v.description || 'Array'
                   };
                 }
@@ -279,7 +291,13 @@ export class HttpMcpServer {
         
         // Session management: Optional if auto-login is enabled (ChatGPT compatibility)
         const sessionId = req.header('Mcp-Session-Id');
-        const hasAutoLogin = !!(process.env.ODOO_URL && (process.env.ODOO_DB || process.env.ODOO_DATABASE) && process.env.ODOO_USERNAME && process.env.ODOO_PASSWORD);
+        const autoTransport = process.env.ODOO_TRANSPORT || 'jsonrpc';
+        const hasAutoLogin = !!(
+          process.env.ODOO_URL &&
+          (process.env.ODOO_DB || process.env.ODOO_DATABASE) &&
+          process.env.ODOO_PASSWORD &&
+          (autoTransport === 'json2' || process.env.ODOO_USERNAME)
+        );
         
         if (!hasAutoLogin && (!sessionId || !this.sessions.has(sessionId))) {
           // Strict session required only if no auto-login
@@ -630,7 +648,15 @@ export class HttpMcpServer {
                     if (v && v.type === 'array' && v.items && v.items.anyOf) {
                       copy.inputSchema.properties[k] = {
                         type: 'array',
-                        items: { type: ['string','number','boolean','array','null'] },
+                        items: {
+                          anyOf: [
+                            { type: 'string' },
+                            { type: 'number' },
+                            { type: 'boolean' },
+                            { type: 'array', items: {} },
+                            { type: 'null' }
+                          ]
+                        },
                         description: v.description || 'Array'
                       };
                     }
@@ -781,7 +807,8 @@ export class HttpMcpServer {
 // Start server if called directly (not when imported as module)
 // This check ensures the server only auto-starts when running `node dist/http-mcp-server.js`
 // and NOT when imported by stdio-server.js or other modules
-const isDirectCall = import.meta.url === `file://${process.argv[1]}`;
+const entryScript = process.argv[1] ? path.resolve(process.argv[1]) : null;
+const isDirectCall = !!entryScript && import.meta.url === pathToFileURL(entryScript).href;
 
 if (isDirectCall) {
   const mode = process.env.MCP_TRANSPORT || 'http';

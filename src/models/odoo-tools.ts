@@ -44,16 +44,16 @@ export class OdooTools {
               },
               username: {
                 type: 'string',
-                description: 'Username for authentication',
+                description: 'Username for authentication (not used by json2)',
               },
               password: {
                 type: 'string',
-                description: 'Password for authentication',
+                description: 'Password for authentication, or API key when transport=json2',
               },
               transport: {
                 type: 'string',
-                enum: ['jsonrpc', 'xmlrpc', 'http'],
-                description: 'Protocol (default: jsonrpc)',
+                enum: ['jsonrpc', 'json2', 'xmlrpc', 'http'],
+                description: 'Protocol (default: jsonrpc). Use json2 for Odoo 19+ external API.',
                 default: 'jsonrpc',
               },
             },
@@ -77,7 +77,16 @@ export class OdooTools {
               domain: {
                 type: 'array',
                 description: 'Search domain filters (e.g., [["is_company", "=", true]])',
-                items: {},
+                items: {
+                  anyOf: [
+                    { type: 'array', items: {} },
+                    { type: 'string' },
+                    { type: 'number' },
+                    { type: 'boolean' },
+                    { type: 'object' },
+                    { type: 'null' }
+                  ]
+                },
                 default: [],
               },
               fields: {
@@ -215,6 +224,16 @@ export class OdooTools {
               },
               args: {
                 type: 'array',
+                items: {
+                  anyOf: [
+                    { type: 'string' },
+                    { type: 'number' },
+                    { type: 'boolean' },
+                    { type: 'object' },
+                    { type: 'array', items: {} },
+                    { type: 'null' }
+                  ]
+                },
                 description: 'Positional arguments for the method',
                 default: [],
               },
@@ -273,11 +292,15 @@ export class OdooTools {
                       type: 'array',
                       minItems: 3,
                       maxItems: 3,
-                      items: [
-                        { type: 'string', description: 'Field name' },
-                        { anyOf: [ { type: 'string' }, { type: 'number' }, { type: 'boolean' } ], description: 'Operator or value depending on position' },
-                        { anyOf: [ { type: 'string' }, { type: 'number' }, { type: 'boolean' }, { type: 'array' }, { type: 'null' } ], description: 'Comparison value' }
-                      ]
+                      items: {
+                        anyOf: [
+                          { type: 'string', description: 'Field name/operator/value' },
+                          { type: 'number' },
+                          { type: 'boolean' },
+                          { type: 'array', items: {} },
+                          { type: 'null' }
+                        ]
+                      }
                     },
                     { type: 'string', description: 'Logical operator (&,|,!)' }
                   ]
