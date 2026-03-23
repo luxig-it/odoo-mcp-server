@@ -1,8 +1,11 @@
 # Odoo MCP Server
 
+## Fork Notice
+This is a fork of the original [odoo-mcp-server](https://github.com/heimerle/odoo-mcp-server).
+We introduce a new transport mode `json2` for direct API key authentication, eliminating the need for a separate login step. This enhancement simplifies integration with Odoo, especially for AI assistants like Claude Desktop.
+
 A professional Model Context Protocol (MCP) server for seamless Odoo ERP integration. Supports both HTTP and STDIO transports for maximum flexibility.
 
-[![npm version](https://img.shields.io/npm/v/@mweinheimer/odoo-mcp-server.svg)](https://www.npmjs.com/package/@mweinheimer/odoo-mcp-server)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## 🚀 Features
@@ -12,11 +15,11 @@ A professional Model Context Protocol (MCP) server for seamless Odoo ERP integra
 - **STDIO Mode**: Direct stdin/stdout communication for Claude Desktop and local AI assistants
 
 ### 🔧 Complete Odoo Integration
-- **Authentication**: Automatic login with environment variables or manual connect
+- **Authentication**: Automatic login with environment variables, manual connect or API key support (JSON2 mode)
 - **CRUD Operations**: Full Create, Read, Update, Delete on any Odoo model
 - **Advanced Search**: Complex domain filtering with Odoo's powerful search syntax
 - **Method Calls**: Execute any custom method on Odoo models
-- **Multi-Protocol**: XML-RPC and JSON-RPC support
+- **Multi-Protocol**: XML-RPC, JSON-RPC, and JSON2 support
 
 ### 🏗️ Professional Architecture
 - **TypeScript**: Full type safety and modern ES modules
@@ -27,18 +30,15 @@ A professional Model Context Protocol (MCP) server for seamless Odoo ERP integra
 
 ## 📦 Installation
 
-### NPM (Recommended)
-```bash
-npm install -g @mweinheimer/odoo-mcp-server
-```
-
 ### From Source
 ```bash
-git clone https://github.com/heimerle/odoo-mcp-server.git
+git clone https://github.com/luxig-it/odoo-mcp-server
 cd odoo-mcp-server
 npm install
 npm run build
 ```
+
+Copy the built files from `dist/stdio-server.js` and/or `dist/http-mcp-server.js` to your desired location to pick them up in external AI Agent tools.
 
 ## ⚙️ Configuration
 
@@ -57,7 +57,7 @@ ODOO_PASSWORD=your_password      # or API key when ODOO_TRANSPORT=json2
 MCP_TRANSPORT=stdio              # 'http' or 'stdio' (default: http)
 
 # Odoo Protocol
-ODOO_TRANSPORT=jsonrpc           # 'jsonrpc', 'json2', or 'xmlrpc' (default: jsonrpc)
+ODOO_TRANSPORT=json2           # 'jsonrpc', 'json2', or 'xmlrpc' (default: jsonrpc)
 
 # HTTP Mode Settings (only for MCP_TRANSPORT=http)
 MCP_HTTP_PORT=3001               # HTTP server port (default: 3001)
@@ -301,11 +301,6 @@ src/
 
 ## 📖 Documentation
 
-- **[Quick Start Guide](./QUICK-START.md)** - Get started in 5 minutes
-- **[Examples](./EXAMPLES.md)** - Detailed usage examples
-- **[Transport Modes](./TRANSPORT-MODES.md)** - HTTP vs STDIO explained
-- **[MCP Setup](./MCP-SETUP.md)** - Claude Desktop integration
-- **[Testing Guide](./TESTING-GUIDE.md)** - How to test the server
 - **[Changelog](./CHANGELOG.md)** - Version history
 
 ## 🐛 Troubleshooting
@@ -353,7 +348,7 @@ MIT License - see [LICENSE](./LICENSE) file for details.
 ## 🔗 Links
 
 - **GitHub**: https://github.com/heimerle/odoo-mcp-server
-- **NPM**: https://www.npmjs.com/package/@mweinheimer/odoo-mcp-server
+- **NPM**: https://www.npmjs.com/package/@luxig-it/odoo-mcp-server
 - **Issues**: https://github.com/heimerle/odoo-mcp-server/issues
 
 ## 🙏 Acknowledgments

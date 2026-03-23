@@ -1,7 +1,7 @@
 {
-  "name": "@mweinheimer/odoo-mcp-server",
-  "version": "1.0.1",
-  "description": "MCP (Model Context Protocol) server for Odoo integration with HTTP and STDIO transports, supporting XML-RPC and JSON-RPC",
+  "name": "@luxig-it/odoo-mcp-server",
+  "version": "1.1.0",
+  "description": "MCP (Model Context Protocol) server for Odoo integration with HTTP and STDIO transports, supporting XML-RPC, JSON-RPC, and JSON2",
   "main": "dist/http-mcp-server.js",
   "types": "dist/index.d.ts",
   "type": "module",
