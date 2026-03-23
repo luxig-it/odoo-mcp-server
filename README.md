@@ -79,7 +79,9 @@ Add to your `claude_desktop_config.json`:
         "ODOO_URL": "http://your-odoo:8069",
         "ODOO_DB": "your_database",
         "ODOO_USERNAME": "your_username",
-        "ODOO_PASSWORD": "your_password"
+        "ODOO_PASSWORD": "your_odoo_api_key",
+        "ODOO_TRANSPORT": "json2",
+        "MCP_TRANSPORT": "stdio"
       }
     }
   }
@@ -97,7 +99,8 @@ Or use the global installation:
         "ODOO_URL": "http://your-odoo:8069",
         "ODOO_DB": "your_database",
         "ODOO_USERNAME": "your_username",
-        "ODOO_PASSWORD": "your_password",
+        "ODOO_PASSWORD": "your_odoo_api_key",
+        "ODOO_TRANSPORT": "json2",
         "MCP_TRANSPORT": "stdio"
       }
     }
