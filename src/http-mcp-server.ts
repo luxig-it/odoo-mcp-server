@@ -10,7 +10,6 @@ import express from 'express';
 import cors from 'cors';
 import crypto from 'crypto';
 import path from 'path';
-import { pathToFileURL } from 'url';
 import { McpServerController } from './controllers/index.js';
 import { logServerEvent } from './views/index.js';
 
@@ -807,8 +806,15 @@ export class HttpMcpServer {
 // Start server if called directly (not when imported as module)
 // This check ensures the server only auto-starts when running `node dist/http-mcp-server.js`
 // and NOT when imported by stdio-server.js or other modules
+const runtimeFlags = globalThis as typeof globalThis & {
+  __ODOO_MCP_SUPPRESS_AUTO_START__?: boolean;
+};
 const entryScript = process.argv[1] ? path.resolve(process.argv[1]) : null;
-const isDirectCall = !!entryScript && import.meta.url === pathToFileURL(entryScript).href;
+const isHttpEntrypoint = !!entryScript
+  && /^http-mcp-server\.(?:js|cjs|mjs)$/i.test(path.basename(entryScript));
+const isDirectCall = !!entryScript
+  && !runtimeFlags.__ODOO_MCP_SUPPRESS_AUTO_START__
+  && isHttpEntrypoint;
 
 if (isDirectCall) {
   const mode = process.env.MCP_TRANSPORT || 'http';

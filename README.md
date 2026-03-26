@@ -38,7 +38,7 @@ npm install
 npm run build
 ```
 
-Copy the built files from `dist/stdio-server.js` and/or `dist/http-mcp-server.js` to your desired location to pick them up in external AI Agent tools.
+Copy the built files from `dist/stdio-server.bundle.cjs` to your desired location to pick them up in external AI Agent tools.
 
 ## ⚙️ Configuration
 
@@ -73,7 +73,7 @@ Add to your `claude_desktop_config.json`:
     "odoo": {
       "command": "node",
       "args": [
-        "/path/to/odoo-mcp-server/dist/stdio-server.js"
+        "/path/to/odoo-mcp-server/dist/stdio-server.bundle.cjs"
       ],
       "env": {
         "ODOO_URL": "http://your-odoo:8069",
@@ -198,7 +198,7 @@ ODOO_URL=http://localhost:8069 \
 ODOO_DB=mydb \
 ODOO_USERNAME=admin \
 ODOO_PASSWORD=admin \
-node dist/stdio-server.js
+node dist/stdio-server.bundle.cjs
 ```
 
 ## 🔧 Available Tools
@@ -275,7 +275,7 @@ curl -X POST http://localhost:3001/mcp \
 
 ### Build from Source
 ```bash
-git clone https://github.com/heimerle/odoo-mcp-server.git
+git clone https://github.com/luxig-it/odoo-mcp-server.git
 cd odoo-mcp-server
 npm install
 npm run build
@@ -350,9 +350,9 @@ MIT License - see [LICENSE](./LICENSE) file for details.
 
 ## 🔗 Links
 
-- **GitHub**: https://github.com/heimerle/odoo-mcp-server
+- **GitHub**: https://github.com/luxig-it/odoo-mcp-server
 - **NPM**: https://www.npmjs.com/package/@luxig-it/odoo-mcp-server
-- **Issues**: https://github.com/heimerle/odoo-mcp-server/issues
+- **Issues**: https://github.com/luxig-it/odoo-mcp-server/issues
 
 ## 🙏 Acknowledgments
 
