@@ -7,6 +7,8 @@ import { OdooApiClient } from './odoo-client.js';
 import { McpTool, ToolHandler, McpToolResponse, OdooConfig } from '../types/index.js';
 import { sanitizeOdooRecords, enforceSafeLimit } from '../utils/odoo-sanitizer.js';
 
+const DEFAULT_FIELD_ATTRIBUTES = ['string', 'type', 'required', 'readonly', 'relation'];
+
 export class OdooTools {
   private client: OdooApiClient | null = null;
 
@@ -257,13 +259,25 @@ export class OdooTools {
       odoo_get_model_fields: {
         definition: {
           name: 'odoo_get_model_fields',
-          description: 'Get field definitions for an Odoo model',
+          description: 'Get compact field definitions for an Odoo model. Use field_names and attributes to narrow the payload further.',
           inputSchema: {
             type: 'object',
             properties: {
               model: {
                 type: 'string',
                 description: 'Model name (e.g., res.partner, sale.order)',
+              },
+              field_names: {
+                type: 'array',
+                items: { type: 'string' },
+                description: 'Optional list of specific field names to inspect',
+                default: [],
+              },
+              attributes: {
+                type: 'array',
+                items: { type: 'string' },
+                description: 'Optional field attributes to fetch. Defaults to a compact subset: string, type, required, readonly, relation.',
+                default: DEFAULT_FIELD_ATTRIBUTES,
               },
             },
             required: ['model'],
@@ -607,13 +621,28 @@ export class OdooTools {
     }
 
     try {
-      const fields = await this.client.getModelFields(args.model);
+      const attributes = Array.isArray(args.attributes) && args.attributes.length > 0
+        ? args.attributes
+        : DEFAULT_FIELD_ATTRIBUTES;
+
+      const fields = await this.client.getModelFields(
+        args.model,
+        args.field_names,
+        attributes
+      );
+
+      const fieldCount = Object.keys(fields).length;
 
       return {
         content: [
           {
             type: 'text',
-            text: `Model ${args.model} fields:\\n${JSON.stringify(fields, null, 2)}`,
+            text: `Model ${args.model} fields (${fieldCount}):\n${JSON.stringify({
+              model: args.model,
+              field_count: fieldCount,
+              attributes,
+              fields,
+            }, null, 2)}`,
           },
         ],
       };

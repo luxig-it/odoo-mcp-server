@@ -353,14 +353,18 @@ export class OdooApiClient {
   /**
    * Get model fields
    */
-  async getModelFields(model: string): Promise<Record<string, any>> {
+  async getModelFields(
+    model: string,
+    fieldNames?: string[],
+    attributes?: string[]
+  ): Promise<Record<string, any>> {
     await this.ensureAuthenticated();
 
     return await this.call({
       model,
       method: 'fields_get',
-      args: [],
-      kwargs: {},
+      args: fieldNames && fieldNames.length > 0 ? [fieldNames] : [],
+      kwargs: attributes && attributes.length > 0 ? { attributes } : {},
     });
   }
 
@@ -531,6 +535,12 @@ export class OdooApiClient {
       case 'create':
         if (payload.vals_list === undefined && args[0] !== undefined) {
           payload.vals_list = Array.isArray(args[0]) ? args[0] : [args[0]];
+        }
+        break;
+
+      case 'fields_get':
+        if (payload.allfields === undefined && args[0] !== undefined) {
+          payload.allfields = args[0];
         }
         break;
 
